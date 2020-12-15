@@ -37,9 +37,10 @@ class TicketPolicy
         return $user->id == $ticket->user_id || $user->assigned_tickets->contains($ticket) && $ticket->isOpen();
     }
     public function claim(User $user, Ticket $ticket){
-        return ($user->role->naam == Role::EERSTELIJNSMEDEWERKERS && $ticket->status->name == Status::EERSTELIJN) || ($user->role->naam == Role::TWEEDELIJNSMEDEWERKERS&& $ticket->status->name == Status::TWEEDELIJN);
+        return $user->role->naam == Role::EERSTELIJNSMEDEWERKERS && $ticket->status->name == Status::EERSTELIJN || $user->role->naam == Role::TWEEDELIJNSMEDEWERKERS&& $ticket->status->name == Status::TWEEDELIJN;
     }
     public function unclaim(User $user, Ticket $ticket){
-        return ($user->role->naam == Role::EERSTELIJNSMEDEWERKERS && $ticket->status->name == Status::EERSTELIJN_TOEGEWEZEN || ($user->role->naam == Role::TWEEDELIJNSMEDEWERKERS && $ticket->status->name == Status::TWEEDELIJN_TOEGEWEZEN));
+        return $user->role->naam == Role::EERSTELIJNSMEDEWERKERS && $ticket->status->name == Status::EERSTELIJN_TOEGEWEZEN || ($user->role->naam == Role::TWEEDELIJNSMEDEWERKERS && $ticket->status->name == Status::TWEEDELIJN_TOEGEWEZEN);
     }
+
 }
