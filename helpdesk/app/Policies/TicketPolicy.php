@@ -42,5 +42,11 @@ class TicketPolicy
     public function unclaim(User $user, Ticket $ticket){
         return $user->role->naam == Role::EERSTELIJNSMEDEWERKERS && $ticket->status->name == Status::EERSTELIJN_TOEGEWEZEN || ($user->role->naam == Role::TWEEDELIJNSMEDEWERKERS && $ticket->status->name == Status::TWEEDELIJN_TOEGEWEZEN);
     }
+    public function escalate(User $user, Ticket $ticket){
+        return $user->role->naam == Role::EERSTELIJNSMEDEWERKERS && $ticket->status->name == Status::EERSTELIJN_TOEGEWEZEN;
+    }
+    public function deescalate(User $user, Ticket $ticket){
+        return $user->assigned_tickets->contains($ticket) && $user->role->naam == Role::TWEEDELIJNSMEDEWERKERS && $ticket->status->name == Status::TWEEDELIJN_TOEGEWEZEN;
+    }
 
 }
