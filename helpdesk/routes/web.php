@@ -56,5 +56,10 @@ Route::get('/ticket/index_helpdesk', 'TicketController@index_helpdesk')->name('t
 
 Route::put('ticket/{id}/close', 'TicketController@close')->name('ticket_close');
 
+Route::put('/ticket/{id}/unclaim', 'TicketController@unclaim')->name('ticket_unclaim');
+
+Route::put('/ticket/{id}/claim', 'TicketController@claim')->name('ticket_claim');
+
+
 
 

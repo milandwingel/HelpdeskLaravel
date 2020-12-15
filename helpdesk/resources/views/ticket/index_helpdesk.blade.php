@@ -9,8 +9,8 @@
         <div class="card-body">
             <div class="row justify-content-center">
                 <div class="card col-mb-6">
-                    @forelse($assigned_tickets as $ticket)
                     assigned tickets
+                    @forelse($assigned_tickets as $ticket)
                     <div class="card-header">
                         {{$ticket->submitting_user->name}}
                         <em>{{$ticket->created_at->toFormattedDateString()  }}</em>
@@ -26,7 +26,6 @@
                     <div class="card-footer">
                         {{ $ticket->status->description }}
                     </div>
-                        <a href="{{ route('ticket_show', ['id' => $ticket])}}">{{ $ticket->title }}</a>
                     @empty
 
                         {{ __('No assigned tickets...') }}

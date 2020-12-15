@@ -13,9 +13,28 @@
                 <em>{{$ticket->created_at->toFormattedDateString() }}</em>
                 <h6> {{$ticket->submitting_user->name}}</h6>
                 <h6 class="card-subtitle mb-2 text-muted">{{$ticket->status->description}}</h6>
-                <a href="{{ \App\Http\Controllers\TicketController::claim($ticket->id)}}" class="href">claim ticket</a>
                 <p class="card-text">{!! nl2br(e($ticket->description)) !!}</p>
                 <h6 class="card_title">
+                    @can('close', $ticket)
+                        <form action="{{route('ticket_close', ['id' => $ticket])}}" method="POST">
+                            @csrf
+                            <input type="submit" value="Close">
+                            @method("PUT")
+                        </form>
+                    @endcan
+
+                    <form action="{{route('ticket_claim', ['id' => $ticket])}}" method="POST">
+                            @csrf
+                            <input type="submit" value="Claim">
+                            @method("PUT")
+                    </form>
+
+                    <form action="{{route('ticket_unclaim', ['id' => $ticket])}}" method="POST">
+                            @csrf
+                            <input type="submit" value="Unclaim">
+                            @method("PUT")
+                    </form>
+
 
                 @forelse($ticket->comments as $comment)
                     <div class="card-footer">
@@ -28,6 +47,7 @@
                     <p>deze ticket heeft geen comment...</p>
                 @endforelse
             </div>
+
 
 
             @can('comment', $ticket)

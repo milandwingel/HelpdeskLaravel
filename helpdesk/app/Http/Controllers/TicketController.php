@@ -76,43 +76,6 @@ class TicketController extends Controller
         return view('ticket.show', ['ticket' => $ticket]);
     }
 
-    public function close($id){
-        $ticket = Ticket::findOrFail($id);
-
-        $this->authorize('close', Ticket::class);
-
-        $afgehandeld = Status::AFGEHANDELD;
-
-        $afgehandeld->user()->submitted_tickets()->save($ticket);
-
-        return redirect()->back()->with('succes', __('Ticket is closed'));
-
-    }
-
-    public function claim($id)
-    {
-        $ticket = Ticket::findOrFail($id);
-        $this->authorize('claim', $ticket);
-
-        $ticketStatus = $ticket->status->name;
-        switch ($ticketStatus) {
-            case Status::EERSTELIJN:
-                $status = Status::where('name', Status::EERSTELIJN_TOEGEWEZEN)->first();
-                break;
-            case Status::TWEEDELIJN:
-                $status = Status::where('name', Status::TWEEDELIJN_TOEGEWEZEN)->first();
-                break;
-        }
-
-        $ticket->status()->associate($status);
-        Auth::user()->assigned_tickets()->attach($id);
-        $ticket->save();
-
-        return redirect()->back()->with('succes', 'Your ticket has been assigned...');
-
-    }
-
-
     public function index_helpdesk()
     {
         $this->authorize('assign', Ticket::class);
@@ -135,6 +98,66 @@ class TicketController extends Controller
                 'unassigned_tickets' => $unassigned_tickets
             ]
         );
+    }
+
+    public function close($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $this->authorize('close', $ticket);
+
+
+        $status = Status::where('name', Status::AFGEHANDELD)->first();
+        $ticket->status()->associate($status);
+
+        $ticket->save();
+
+        return redirect()->back()->with('succes', 'Your ticket is closed...');
+    }
+
+    public function claim($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $this->authorize('claim', $ticket);
+
+        $ticketStatus = $ticket->status->name;
+
+        switch ($ticketStatus) {
+            case Status::EERSTELIJN:
+                $status = Status::where('name', Status::EERSTELIJN_TOEGEWEZEN)->first();
+                break;
+            case Status::TWEEDELIJN:
+                $status = Status::where('name', Status::TWEEDELIJN_TOEGEWEZEN)->first();
+                break;
+        }
+        $ticket->status()->associate($status);
+        Auth::user()->assigned_tickets()->attach($id);
+        $ticket->save();
+
+        return redirect()->back()->with('succes', 'Your ticket has been assigned...');
+
+    }
+
+    public function unclaim($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $this->authorize('unclaim', $ticket);
+
+        $ticketStatus = $ticket->status->name;
+        switch ($ticketStatus) {
+            case Status::EERSTELIJN_TOEGEWEZEN:
+                $status = Status::where('name', Status::EERSTELIJN)->first();
+                break;
+            case Status::TWEEDELIJN_TOEGEWEZEN:
+                $status = Status::where('name', Status::TWEEDELIJN)->first();
+                break;
+        }
+
+        $ticket->status()->associate($status);
+        Auth::user()->assigned_tickets()->detach($id);
+        $ticket->save();
+
+        return redirect()->back()->with('succes', 'Your ticket has been unassigned...');
+
     }
 
 
